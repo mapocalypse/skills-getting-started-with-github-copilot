@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const participantsList = document.getElementById("participants");
   const activitiesList = document.getElementById("activities-list");
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
@@ -27,13 +28,21 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
           <div class="participants-section">
             <strong>Current Participants (${details.participants.length}):</strong>
-            <ul class="participants-list">
-              ${details.participants.map(participant => `<li>${participant}</li>`).join("")}
+            <ul class="participants-list no-bullets">
+              ${details.participants.map(participant => `<li>${participant} <span class='delete-icon' title='Unregister participant' data-activity='${name}' data-participant='${participant}'>&times;</span></li>`).join("")}
             </ul>
           </div>
         `;
 
         activitiesList.appendChild(activityCard);
+  // Delegate click event for delete icons
+  activitiesList.addEventListener("click", async (event) => {
+    if (event.target.classList.contains("delete-icon")) {
+      const activity = event.target.getAttribute("data-activity");
+      const participant = event.target.getAttribute("data-participant");
+      await unregisterParticipant(activity, participant);
+    }
+  });
 
         // Add option to select dropdown
         const option = document.createElement("option");
@@ -68,6 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Refresh activities list to show new participant
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
@@ -89,4 +100,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize app
   fetchActivities();
+
+// Unregister participant function
+async function unregisterParticipant(activity, participant) {
+  try {
+    const response = await fetch(`/activities/${encodeURIComponent(activity)}/unregister?email=${encodeURIComponent(participant)}`, {
+      method: "POST",
+    });
+    if (response.ok) {
+      // Refresh activities list to update UI
+      await document.dispatchEvent(new Event("DOMContentLoaded"));
+    } else {
+      const result = await response.json();
+      alert(result.detail || "Failed to unregister participant.");
+    }
+  } catch (error) {
+    alert("Error unregistering participant.");
+    console.error("Unregister error:", error);
+  }
+}
 });
