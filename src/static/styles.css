@@ -1,3 +1,21 @@
+/* Hide bullet points for participant list */
+.no-bullets {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+/* Style for delete icon */
+.delete-icon {
+  cursor: pointer;
+  color: #d9534f;
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+  transition: color 0.2s;
+}
+.delete-icon:hover {
+  color: #b52a1a;
+}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -72,6 +90,24 @@ section h3 {
 
 .activity-card p {
   margin-bottom: 8px;
+}
+
+.participants-section {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.participants-list {
+  margin-left: 20px;
+  margin-top: 8px;
+  list-style-type: disc;
+}
+
+.participants-list li {
+  margin-bottom: 5px;
+  color: #555;
+  font-size: 14px;
 }
 
 .form-group {
